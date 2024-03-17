@@ -17,6 +17,14 @@ function cargarEventListeners() {
         articulosCarrito = [];
 
         limpiarHTML();
+
+        sincronizarStorage();
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        articulosCarrito = JSON.parse(localStorage.getItem('articulos')) || [];
+
+        carritoHTML();
     });
 };
 
@@ -87,27 +95,35 @@ function carritoHTML() {
     // limpiar HTML
     limpiarHTML();
 
-    // Recorre el carrito y genera el HTML
-    articulosCarrito.forEach( curso => {
-        const {imagen, titulo, precio, cantidad, id} = curso;
-        const row = document.createElement('tr'); // para cada curso creamos un elemento tr (table row)
-        row.innerHTML = `
-            <td>
-                <img src="${imagen}" width="100" >
-            </td>
-            <td>${titulo}</td>
-            <td>${precio}</td>
-            <td>${cantidad}</td>
-            <td>
-                <a href="#" class="borrar-curso" data-id="${id}" > X </a>
-            </td>
-        `;
+    if (articulosCarrito.length > 0) {
+        // Recorre el carrito y genera el HTML
+        articulosCarrito.forEach( curso => {
+            const {imagen, titulo, precio, cantidad, id} = curso;
+            const row = document.createElement('tr'); // para cada curso creamos un elemento tr (table row)
+            row.innerHTML = `
+                <td>
+                    <img src="${imagen}" width="100" >
+                </td>
+                <td>${titulo}</td>
+                <td>${precio}</td>
+                <td>${cantidad}</td>
+                <td>
+                    <a href="#" class="borrar-curso" data-id="${id}" > X </a>
+                </td>
+            `;
 
-        // Agrega el HTML del carrito en el tbody
-        contenidoCarrito.appendChild(row);
-    });
+            // Agrega el HTML del carrito en el tbody
+            contenidoCarrito.appendChild(row);
+        });
+    };
+
+    sincronizarStorage();
 };
 
+// Sincronizar Local Storage
+function sincronizarStorage() {
+    localStorage.setItem('articulos', JSON.stringify(articulosCarrito))
+};
 
 function limpiarHTML() {
     // Forma lenta
